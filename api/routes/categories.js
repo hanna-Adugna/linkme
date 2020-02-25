@@ -10,7 +10,7 @@ router.get('/', (req, res, next) => {
 router.post('/', (req, res, next) => {
 
     // Example of Parsing JSON request
-    let category = {
+    const category = {
         categoryName: req.body.categoryName
     };
 
