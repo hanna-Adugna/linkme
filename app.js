@@ -9,7 +9,7 @@ const categoryRoutes = require('./api/routes/categories');
 
 // Routes
 app.use('/bids', bidRoutes);
-app.use('/categories',categoryRoutes);
+app.use('/categories', categoryRoutes);
 
 // Error Handlers
 app.use((req, res, next) => {
