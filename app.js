@@ -6,6 +6,11 @@ const bodyParser = require('body-parser');
 // Route Handler Middleware initialization
 const bidRoutes = require('./api/routes/bids');
 const categoryRoutes = require('./api/routes/categories');
+const userRoutes = require('./api/routes/users');
+const formRoutes = require('./api/routes/forms');
+const answerRoutes = require('./api/routes/answers');
+const jobRoutes = require('./api/routes/jobs');
+const ratingRoutes = require('./api/routes/ratings');
 
 // dev tools
 app.use(morgan('dev'));
@@ -27,6 +32,11 @@ app.use((req, res, next) => {
 // Routes
 app.use('/bids', bidRoutes);
 app.use('/categories', categoryRoutes);
+app.use('/users', userRoutes);
+app.use('/forms', formRoutes);
+app.use('/answers', answerRoutes);
+app.use('/jobs', jobRoutes);
+app.use('/ratings', ratingRoutes);
 
 // Error Handlers
 app.use((req, res, next) => {
