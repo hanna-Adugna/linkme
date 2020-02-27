@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 // Route Handler Middleware initialization
 const bidRoutes = require('./api/routes/bids');
@@ -11,6 +12,13 @@ const formRoutes = require('./api/routes/forms');
 const answerRoutes = require('./api/routes/answers');
 const jobRoutes = require('./api/routes/jobs');
 const ratingRoutes = require('./api/routes/ratings');
+
+//db connection 
+mongoose.connect(
+    'mongodb+srv://linkme:'+
+     process.env.MONGO_ATLAS_PW +
+     '@linkme-pnryd.mongodb.net/test?retryWrites=true&w=majority');
+
 
 // dev tools
 app.use(morgan('dev'));
