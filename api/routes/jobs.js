@@ -1,5 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
+
+const Job = require('../models/job.model');
+
 
 router.get('/', (req, res, next) => {
     res.status(200).json({
@@ -9,11 +13,22 @@ router.get('/', (req, res, next) => {
 
 router.post('/', (req, res, next) => {
     // Example of Parsing JSON request
-    let job = {
+    // let job = {
+    //     title: req.body.title,
+    //     jobLength: req.body.jobLength
+    // };
+    const job = new Job({
+        _id: new mongoose.Types.ObjectId(),
         title: req.body.title,
-        jobLength: req.body.jobLength
-    };
-
+        duration: req.body.duration
+    });
+    job
+    .save().
+    then(result => {
+        console.log(result);
+    })
+    .catch(err => console.log(err));
+    
     res.status(201).json({
         message: "POST a Job",
         postedJob: job
