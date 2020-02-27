@@ -14,10 +14,17 @@ const jobRoutes = require('./api/routes/jobs');
 const ratingRoutes = require('./api/routes/ratings');
 
 //db connection 
-mongoose.connect(
-    'mongodb+srv://linkme:'+
-     process.env.MONGO_ATLAS_PW +
-     '@linkme-pnryd.mongodb.net/test?retryWrites=true&w=majority');
+mongoose.connect('mongodb+srv://linkme:' +
+    process.env.MONGO_ATLAS_PW +
+    '@linkme-pnryd.mongodb.net/test?retryWrites=true&w=majority',
+    {
+        useUnifiedTopology: true,
+        useNewUrlParser: true
+    })
+    .then(() => console.log('Database Connected'))
+    .catch(err => {
+        console.log(err);
+    });
 
 
 // dev tools
@@ -30,7 +37,7 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, ' +
         'Content-Type, Accept, Authorization');
-    if(req.method === 'OPTIONS') {
+    if (req.method === 'OPTIONS') {
         res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
         return res.status(200).json({});
     }
