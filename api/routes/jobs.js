@@ -32,7 +32,7 @@ router.post('/', (req, res, next) => {
         console.log(result);
         res.status(201).json({
             message: "POST a Job",
-            postedJob: result
+            postedJob: job
     })
 })
     .catch(err => {
