@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
-const AdminSchema = mongoose.Schema({
+const adminSchema = mongoose.Schema({
         _id: mongoose.Types.ObjectId,
-        user_ID: String
+        userID: mongoose.Schema.Types.ObjectId,
 });
 
-module.exports = mongoose.model('Admin',AdminSchema);
+module.exports = mongoose.model('Admin',adminSchema);
