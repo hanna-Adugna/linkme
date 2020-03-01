@@ -6,10 +6,26 @@ const Job = require('../models/job.model');
 
 
 router.get('/', (req, res, next) => {
-    Job.find().exec()
+    Job.find()
+    .select('title duration')
+    .exec()
     .then(docs =>{
-        console.log(docs);
-        res.status(200).json(docs);
+        const response = {
+            count: docs.length,
+            jobs: docs.map(doc => {
+                return{
+                  title: doc.title,
+                  duration: doc.duration,
+                  _id: doc._id,
+                  request: {
+                      type: 'GET',
+                      url: 'http://localhost/3000/jobs/' + doc._id
+                  }
+                }
+            })
+
+        };
+        res.status(200).json(response);
     })
     .catch(err => {
         console.log(err);
@@ -27,12 +43,21 @@ router.post('/', (req, res, next) => {
         duration: req.body.duration
     });
     job
-    .save().
-    then(result => { 
+    .save()
+    .then(result => { 
         console.log(result);
         res.status(201).json({
-            message: "POST a Job",
-            postedJob: job
+            message: "Job created successfully",
+            createdJob: {
+                title : result.title,
+                duration:result.duration,
+                _id: result._id,
+                request: {
+                    type: 'Post',
+                    url: 'http://localhost/3000/jobs/' + result._id
+                }
+
+            }
     })
 })
     .catch(err => {
@@ -44,17 +69,25 @@ router.post('/', (req, res, next) => {
 });
 router.get("/:jobID",(req,res,next) => {
     const id = req.params.jobID;
-    Job.findById(id).exec()
+    Job.findById(id)
+    .select('title duration')
+    .exec()
     .then(doc => {
         console.log("From databse",doc);
         if(doc){
-            res.status(200).json(doc);
+            res.status(200).json({
+                job: doc,
+                request: {
+                type: 'GET',
+                url: 'http://localhost/3000/jobs/' 
+                }
+
+            });
         }
         else{
             res.status(404)
-            .json({message: 'No valid entry found'});
+            .json({message: 'No Data Found under Specified ID'});
         }
-        res.status(200).json(doc);
  })
  .catch(err => {
     console.log(err);
@@ -72,7 +105,13 @@ router.patch('/:jobID', (req, res, next) => {
   .exec()
   .then(result => {
     console.log(result);
-    res.status(200).json(result);
+    res.status(200).json({
+        message: 'Job updated',
+        request:{
+            type: 'GET',
+            url: 'http://localhost/3000/jobs/' + id
+        }
+    });
   })
   .catch(err => {
    console.log(err);
@@ -87,7 +126,16 @@ router.delete('/:jobID', (req, res, next) => {
   Job.remove({_id: id})
   .exec()
   .then(result => {
-      res.status(200).json(result);
+      res.status(200).json({
+          message: 'Job deleted',
+          request: {
+              type: 'POST',
+              url: 'http://localhost/3000/jobs/',
+              body: {title: 'String', duration: 'Number'}
+               
+
+          }
+      });
   })
   .catch(err => {
       console.log(err);

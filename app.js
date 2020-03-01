@@ -25,7 +25,7 @@ mongoose.connect('mongodb+srv://linkme:' +
     .catch(err => {
         console.log(err);
     });
-
+mongoose.Promise = global.Promise;
 
 // dev tools
 app.use(morgan('dev'));

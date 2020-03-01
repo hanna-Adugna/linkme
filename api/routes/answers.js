@@ -6,16 +6,25 @@ const Answer = require('../models/answer.model');
 
 router.get('/', (req, res, next) => {
     Answer.find()
+        .select('formID answers')
         .exec()
         .then(doc => {
-            console.log(doc);
-            if(doc.length > 0) {
-                res.status(200).json(doc);
-            } else {
-                res.status(404).json({
-                    message: 'No Data Found'
-                });
-            }
+            const response = {
+                count: docs.length,
+                answers: docs.map(doc => {
+                    return{
+                      formID: doc.formID,
+                      answers: doc.answers,
+                      _id: doc._id,
+                      request: {
+                          type: 'GET',
+                          url: 'http://localhost/3000/bids/' + doc._id
+                      }
+                    }
+                })
+    
+            };
+            res.status(200).json(response);
         })
         .catch(err => {
             console.log(err);
@@ -28,11 +37,19 @@ router.get('/', (req, res, next) => {
 router.get('/:answerID', (req, res, next) => {
     const id = req.params.answerID;
     Answer.findById(id)
+        .select('formID answers')
         .exec()
         .then(doc => {
             console.log("response to GET request", doc);
             if(doc) {
-                res.status(200).json(doc);
+                res.status(200).json({
+                    answer: doc,
+                    request: {
+                    type: 'GET',
+                    url: 'http://localhost/3000/answers/' 
+                    }
+    
+                });
             }
             else {
                 res.status(404).json({
@@ -55,13 +72,22 @@ router.post('/', (req, res, next) => {
         answers: req.body.answers
     });
     answer.save()
-        .then(result => {
+        .then(result => { 
             console.log(result);
             res.status(201).json({
-                message: "Answers",
-                postedAnswer: answer
-            });
+                message: "answer created successfully",
+                createdAnswer: {
+                    formID : result.formID,
+                    answers:result.answers,
+                    _id: result._id,
+                    request: {
+                        type: 'Post',
+                        url: 'http://localhost/3000/answers/' + result._id
+                    }
+    
+                }
         })
+    })
         .catch(err => {
             console.log(err);
             res.status(500).json({
@@ -82,7 +108,13 @@ router.patch('/:answerID', (req, res, next) => {
     ).exec()
         .then(result => {
             console.log(result);
-            res.status(200).json(result);
+            res.status(200).json({
+                message: 'answer updated',
+                request:{
+                    type: 'GET',
+                    url: 'http://localhost/3000/answer/' + id
+                }
+            });
         })
         .catch(err => {
             console.log(err);
@@ -97,8 +129,13 @@ router.delete('/:answerID', (req, res, next) => {
         _id: id
     }).exec()
         .then(result => {
-            console.log(result);
-            res.status(200).json(result);
+            res.status(200).json({
+                message: 'answer deleted',
+                request: {
+                    type: 'POST',
+                    url: 'http://localhost/3000/answers/',
+                }
+            });
         })
         .catch(err => {
             console.log(err);

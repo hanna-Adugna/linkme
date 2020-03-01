@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 
 const bidSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    jobID: mongoose.Schema.Types.ObjectId,
-    employeeID: mongoose.Schema.Types.ObjectId,
-    status: Boolean,
+    jobID:{ type: mongoose.Schema.Types.ObjectId, require: true},
+    employeeID:{ type: mongoose.Schema.Types.ObjectId, require: true},
+    status:{ type: Boolean, require: true},
     description: String
 });
 
