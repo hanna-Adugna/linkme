@@ -6,10 +6,30 @@ const User = require('../models/user.model');
 
 
 router.get('/', (req, res, next) => {
-    User.find().exec()
+    User.find()
+    .select('username password phoneNumber email userType numberOfReport')
+    .exec()
     .then(docs =>{
-        console.log(docs);
-        res.status(200).json(docs);
+        const response = {
+            count: docs.length,
+            user: docs.map(doc => {
+                return{
+                  username: doc.username,
+                  password: doc.password,
+                  phoneNumber: doc.phoneNumber,
+                  email: doc.email,
+                  userType: doc.userType,
+                  numberOfReport: doc.numberOfReport,
+                   _id: doc._id,
+                  request: {
+                      type: 'GET',
+                      url: 'http://localhost/3000/users/' + doc._id
+                  }
+                }
+            })
+            
+        };
+        res.status(200).json(response);
     })
     .catch(err => {
         console.log(err);
@@ -28,14 +48,28 @@ router.post('/', (req, res, next) => {
         phoneNumber: req.body.phoneNumber,
         email: req.body.email,
         userType: req.body.userType,
+        numberOfReport: req.body.numberOfReport,
     });
     user
-    .save().
-    then(result => { 
+    .save()
+    .then(result => { 
         console.log(result);
         res.status(201).json({
-            message: "POST a User",
-            postedUser: user
+            message: "User created successfully",
+            createdUser: {
+                username: req.body.username,
+                password: req.body.password,
+                phoneNumber: req.body.phoneNumber,
+                email: req.body.email,
+                userType: req.body.userType,
+                numberOfReport: req.body.numberOfReport,
+                _id: result._id,
+                request: {
+                    type: 'Post',
+                    url: 'http://localhost/3000/users/' + result._id
+                }
+
+            }
     })
 })
     .catch(err => {
@@ -47,11 +81,20 @@ router.post('/', (req, res, next) => {
 });
 router.get("/:userID",(req,res,next) => {
     const id = req.params.userID;
-    User.findById(id).exec()
+    User.findById(id)
+    .select('username password phoneNumber email userType numberOfReport')
+    .exec()
     .then(doc => {
         console.log("From databse",doc);
         if(doc){
-            res.status(200).json(doc);
+            res.status(200).json({
+                user: doc,
+                request: {
+                type: 'GET',
+                url: 'http://localhost/3000/users/' 
+                }
+
+            });
         }
         else{
             res.status(404)
@@ -75,7 +118,13 @@ router.patch('/:userID', (req, res, next) => {
   .exec()
   .then(result => {
     console.log(result);
-    res.status(200).json(result);
+    res.status(200).json({
+        message: 'User updated',
+        request:{
+            type: 'GET',
+            url: 'http://localhost/3000/users/' + id
+        }
+    });
   })
   .catch(err => {
    console.log(err);
@@ -90,7 +139,14 @@ router.delete('/:userID', (req, res, next) => {
   User.remove({_id: id})
   .exec()
   .then(result => {
-      res.status(200).json(result);
+    res.status(200).json({
+        message: 'User deleted',
+        request: {
+            type: 'POST',
+            url: 'http://localhost/3000/users/',
+         
+        }
+    });
   })
   .catch(err => {
       console.log(err);

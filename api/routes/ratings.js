@@ -6,10 +6,28 @@ const Rating = require('../models/rating.model');
 
 
 router.get('/', (req, res, next) => {
-    Rating.find().exec()
+    Rating.find()
+    .select('bidID userID points comment')
+    .exec()
     .then(docs =>{
-        console.log(docs);
-        res.status(200).json(docs);
+        const response = {
+            count: docs.length,
+            rating: docs.map(doc => {
+                return{
+                    bidID: doc.bidID,
+                    userID: doc.userID,
+                    points: doc.points,
+                    comment: doc.comment,
+                    _id: doc._id,
+                    request: {
+                     type: 'GET',
+                    url: 'http://localhost/3000/ratings/' + doc._id
+                  }
+                }
+            })
+
+        };
+        res.status(200).json(response);
     })
     .catch(err => {
         console.log(err);
@@ -29,12 +47,23 @@ router.post('/', (req, res, next) => {
         comment: req.body.comment
     });
     rating
-    .save().
-    then(result => { 
+    .save()
+    .then(result => { 
         console.log(result);
         res.status(201).json({
-            message: "rating",
-            postedRating: rating
+            message: "rated successfully",
+            rated: {
+                bidID : result.bidID,
+                userID:result.userID,
+                points : result.points,
+                comment:result.comment,
+                _id: result._id,
+                request: {
+                    type: 'Post',
+                    url: 'http://localhost/3000/ratings/' + result._id
+                }
+
+            }
     })
 })
     .catch(err => {
@@ -46,11 +75,20 @@ router.post('/', (req, res, next) => {
 });
 router.get("/:ratingID",(req,res,next) => {
     const id = req.params.ratingID;
-    Rating.findById(id).exec()
+    Rating.findById(id)
+    .select('bidID userID points comment')
+    .exec()
     .then(doc => {
         console.log("From databse",doc);
         if(doc){
-            res.status(200).json(doc);
+            res.status(200).json({
+                rating: doc,
+                request: {
+                type: 'GET',
+                url: 'http://localhost/3000/ratings/' 
+                }
+
+            });
         }
         else{
             res.status(404)
@@ -74,7 +112,13 @@ router.patch('/:ratingID', (req, res, next) => {
   .exec()
   .then(result => {
     console.log(result);
-    res.status(200).json(result);
+    res.status(200).json({
+        message: 'rating updated',
+        request:{
+            type: 'GET',
+            url: 'http://localhost/3000/ratings/' + id
+        }
+    });
   })
   .catch(err => {
    console.log(err);
@@ -89,8 +133,15 @@ router.delete('/:ratingID', (req, res, next) => {
   Rating.remove({_id: id})
   .exec()
   .then(result => {
-      res.status(200).json(result);
-  })
+    res.status(200).json({
+        message: 'rating deleted',
+        request: {
+            type: 'POST',
+            url: 'http://localhost/3000/ratings/',             
+
+        }
+    });
+})
   .catch(err => {
       console.log(err);
       res.status(500).json({

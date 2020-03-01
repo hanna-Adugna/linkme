@@ -6,16 +6,25 @@ const Form = require('../models/form.model');
 
 router.get('/', (req, res, next) => {
     Form.find()
+    .select('jobID questions')
         .exec()
-        .then(doc => {
-            console.log(doc);
-            if(doc.length > 0) {
-                res.status(200).json(doc);
-            } else {
-                res.status(404).json({
-                    message: 'No Data Found'
-                });
-            }
+        .then(docs =>{
+            const response = {
+                count: docs.length,
+                forms: docs.map(doc => {
+                    return{
+                      jobID: doc.jobID,
+                      questions: doc.questions,
+                      _id: doc._id,
+                      request: {
+                          type: 'GET',
+                          url: 'http://localhost/3000/forms/' + doc._id
+                      }
+                    }
+                })
+    
+            };
+            res.status(200).json(response);
         })
         .catch(err => {
             console.log(err);
@@ -28,11 +37,19 @@ router.get('/', (req, res, next) => {
 router.get('/:formID', (req, res, next) => {
     const id = req.params.formID;
     Form.findById(id)
+        .select('jobID questions')
         .exec()
         .then(doc => {
             console.log("response to GET request", doc);
-            if(doc) {
-                res.status(200).json(doc);
+            if(doc){
+                res.status(200).json({
+                    form: doc,
+                    request: {
+                    type: 'GET',
+                    url: 'http://localhost/3000/forms/' 
+                    }
+    
+                });
             }
             else {
                 res.status(404).json({
@@ -58,9 +75,18 @@ router.post('/', (req, res, next) => {
         .then(result => {
             console.log(result);
             res.status(201).json({
-                message: "forms",
-                postedForm: form
-            });
+                message: "form created successfully",
+                createdform: {
+                    jobID : result.jobID,
+                    questions:result.questions,
+                    _id: result._id,
+                    request: {
+                        type: 'Post',
+                        url: 'http://localhost/3000/forms/' + result._id
+                    }
+    
+                }
+        })
         })
         .catch(err => {
             console.log(err);
@@ -81,8 +107,14 @@ router.patch('/:formID', (req, res, next) => {
         { _id: id }, { $set: updateOps }
     ).exec()
         .then(result => {
-            console.log(result);
-            res.status(200).json(result);
+            console.log(result); 
+            res.status(200).json({
+                message: 'form updated',
+                request:{
+                    type: 'GET',
+                    url: 'http://localhost/3000/forms/' + id
+                }
+            });
         })
         .catch(err => {
             console.log(err);
@@ -92,14 +124,19 @@ router.patch('/:formID', (req, res, next) => {
 
 router.delete('/:formID', (req, res, next) => {
     const id = req.params.formID;
-
-    Form.remove({
+   Form.remove({
         _id: id
     }).exec()
-        .then(result => {
-            console.log(result);
-            res.status(200).json(result);
-        })
+    .then(result => {
+        res.status(200).json({
+            message: 'form deleted',
+            request: {
+                type: 'POST',
+                url: 'http://localhost/3000/forms/',
+         
+            }
+        });
+    })
         .catch(err => {
             console.log(err);
             res.status(500).json(err);

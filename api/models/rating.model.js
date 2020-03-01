@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 
 const ratingSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    bidID: mongoose.Schema.Types.ObjectId,
-    userID: mongoose.Schema.Types.ObjectId,
-    points: String,
-    comment: String,
+    bidID: { type: mongoose.Schema.Types.ObjectId, require: true},
+    userID:{ type: mongoose.Schema.Types.ObjectId, require: true},
+    points: { type: Number, require: true},
+    comment: { type: String, require: true},
     
 });
 

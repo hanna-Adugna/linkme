@@ -2,8 +2,9 @@ const mongoose = require('mongoose');
 
 const answerSchema = mongoose.Schema({
         _id: mongoose.Types.ObjectId,
-        form_ID: String,
-        answers: String
+        form_ID: { type: mongoose.Schema.Types.ObjectId, require: true},
+        answers: { type: Object, require: true}
+
 });
 
 module.exports = mongoose.model('Answer',answerSchema);
