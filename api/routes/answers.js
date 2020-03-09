@@ -1,16 +1,18 @@
 const express = require('express');
 const router = express.Router();
 
+const checkAuth = require('../middleware/check-auth');
+
 const AnswerController = require('../controllers/answers');
 
-router.get('/', AnswerController.getAll);
+router.get('/', checkAuth, AnswerController.getAllAnswers);
 
-router.get('/:answerID', AnswerController.getByID);
+router.get('/:answerID',checkAuth, AnswerController.getByID);
 
-router.post('/', AnswerController.createAnswer);
+router.post('/', checkAuth,AnswerController.createAnswer);
 
-router.patch('/:answerID', AnswerController.updateAnswer);
+router.patch('/:answerID',checkAuth, AnswerController.updateAnswer);
 
-router.delete('/:answerID', AnswerController.deleteAnswer);
+router.delete('/:answerID',checkAuth, AnswerController.deleteAnswer);
 
 module.exports = router;

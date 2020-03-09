@@ -3,18 +3,26 @@ const mongoose = require('mongoose');
 const Answer = require('../models/answer.model');
 
 // GET all Answers from model
-exports.getAll = (req, res, next) => {
+exports.getAllAnswers = (req, res, next) => {
     Answer.find()
         .exec()
         .then(doc => {
-            console.log(doc);
-            if(doc.length > 0) {
-                res.status(200).json(doc);
-            } else {
-                res.status(404).json({
-                    message: 'No Data Found'
-                });
-            }
+            const response = {
+                count: docs.length,
+                answer: docs.map(doc => {
+                    return{
+                        formID: doc.formID,
+                        answers: doc.answers,
+                      _id: doc._id,
+                      request: {
+                          type: 'GET',
+                          url: process.env.URL +'/answers/' + doc._id
+                      }
+                    }
+                })
+    
+            };
+            res.status(200).json(response);
         })
         .catch(err => {
             console.log(err);
@@ -32,7 +40,14 @@ exports.getByID = (req, res, next) => {
         .then(doc => {
             console.log("response to GET request", doc);
             if(doc) {
-                res.status(200).json(doc);
+                res.status(200).json({
+                    bid: doc,
+                    request: {
+                    type: 'GET',
+                    url: process.env.URL +'/answers/' 
+                    }
+    
+                });
             }
             else {
                 res.status(404).json({
@@ -59,9 +74,18 @@ exports.createAnswer = (req, res, next) => {
         .then(result => {
             console.log(result);
             res.status(201).json({
-                message: "Answers",
-                postedAnswer: answer
-            });
+                message: "answer created successfully",
+                createdAnswer: {
+                    formID: result.formID,
+                    answers: result.answers,
+                    _id: result._id,
+                    request: {
+                        type: 'Post',
+                        url: process.env.URL +'/answers/' + result._id
+                    }
+    
+                }
+        });
         })
         .catch(err => {
             console.log(err);
@@ -84,7 +108,13 @@ exports.updateAnswer = (req, res, next) => {
     ).exec()
         .then(result => {
             console.log(result);
-            res.status(200).json(result);
+            res.status(200).json({
+                message: 'answer updated',
+                request:{
+                    type: 'GET',
+                    url: process.env.URL + '/answers/' + id
+                }
+            });
         })
         .catch(err => {
             console.log(err);
@@ -99,9 +129,14 @@ exports.deleteAnswer = (req, res, next) => {
     Answer.remove({
         _id: id
     }).exec()
-        .then(result => {
-            console.log(result);
-            res.status(200).json(result);
+        .then(result =>  {
+            res.status(200).json({
+                message: 'answers deleted',
+                request: {
+                    type: 'POST',
+                    url: process.env.URL +'/answers/',
+                }
+            });
         })
         .catch(err => {
             console.log(err);

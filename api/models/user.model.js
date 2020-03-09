@@ -2,12 +2,17 @@ const mongoose = require('mongoose');
 
 const userSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    username: { type: String, require: true},
+    // username: { type: String,  unique: true },
     password: { type: String, require: true},
-    phoneNumber: { type: String, require: true},
-    email: { type: String, require: true},
-    userType: { type: String, require: true},
-    numberOfReport: { type: Number, require: true},
+    // phoneNumber: { type: String, },
+    email: { 
+        type: String,
+         require: true,
+         unique: true,
+         match: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
+        },
+    // userType: { type: String },
+    // numberOfReport: { type: Number},
 
     
 });

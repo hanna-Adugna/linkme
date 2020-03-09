@@ -1,5 +1,7 @@
 {
  "env":{
-     "MONGO_ATLAS_PW": "LinkMe@123"
+     "MONGO_ATLAS_PW": "LinkMe@123",
+     "JWT_KEY": "secret",
+    "URL": "http://localhost:5000"
  }
 }
