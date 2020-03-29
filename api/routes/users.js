@@ -5,9 +5,9 @@ const checkAuth = require('../middleware/check-auth');
 
 const UserController = require('../controllers/users')
 
-router.get('/', checkAuth , UserController.getAllUsers );
+router.get('/' , checkAuth, UserController.getAllUsers );
 
-router.post('/signup', checkAuth , UserController.signupUser);
+router.post('/signup', checkAuth, UserController.signupUser);
 
 router.post('/login', checkAuth, UserController.loginUser )
 

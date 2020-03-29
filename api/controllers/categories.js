@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const Category = require('../models/category.model');
 
 // GET all categories from model

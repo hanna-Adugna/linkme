@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const Bid = require('../models/bid.model');
 
 // GET all bids from model
@@ -6,23 +8,23 @@ exports.getAllBids =  (req, res, next) => {
         .select('jobID employeeID status description')
         .exec()
         .then(doc => {
-            // const response = {
-            //     count: docs.length,
-            //     bids: docs.map(doc => {
-            //         return{
-            //             jobID: doc.jobID,
-            //             employeeID: doc.employeeID,
-            //             status: doc.status,
-            //             description: doc.description,
-            //           _id: doc._id,
-            //           request: {
-            //               type: 'GET',
-            //               url: process.env.URL +'/bids/' + doc._id
-            //           }
-            //         }
-            //     })
+            const response = {
+                count: docs.length,
+                bids: docs.map(doc => {
+                    return{
+                        jobID: doc.jobID,
+                        employeeID: doc.employeeID,
+                        status: doc.status,
+                        description: doc.description,
+                      _id: doc._id,
+                      request: {
+                          type: 'GET',
+                          url: process.env.URL +'/bids/' + doc._id
+                      }
+                    }
+                })
     
-            // };
+            };
             res.status(200).json(doc);
         })
         .catch(err => {

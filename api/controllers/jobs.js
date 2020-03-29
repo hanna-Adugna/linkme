@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const Job = require('../models/job.model');
 
 // GET all jobd from model
