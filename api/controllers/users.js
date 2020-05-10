@@ -94,6 +94,7 @@ exports.signupUser = (req, res, next) => {
                         userType: req.body.userType,
                         numberOfReport: req.body.numberOfReport,
                     }); 
+                    
             user
             .save()
             .then(result => { 
@@ -155,9 +156,16 @@ exports.loginUser = (req,res, next) => {
                     //options
                     expiresIn: "1h"
                 });
+                // const user = new User({
+                //     _id: new mongoose.Types.ObjectId(),
+                //     userType: req.body.userType,
+                // }); 
                 return res.status(200).json({
                     message: 'Auth successful',
-                    token: token
+                    token: token,
+                    loggedUser: {
+                    userType: user[0].userType 
+                    }
                 });
             }
              res.status(401).json({

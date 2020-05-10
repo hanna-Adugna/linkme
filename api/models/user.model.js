@@ -11,7 +11,7 @@ const userSchema = mongoose.Schema({
          unique: true,
          match: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
         },
-    userType: { type: String },
+    userType: { type: String, enum:['Admin','Employer','Employee'] },
     numberOfReport: { type: Number, default: 0 },
 
     

@@ -9,8 +9,8 @@ exports.getAllBids =  (req, res, next) => {
         .exec()
         .then(doc => {
             const response = {
-                count: docs.length,
-                bids: docs.map(doc => {
+                count: doc.length,
+                bids: doc.map(doc => {
                     return{
                         jobID: doc.jobID,
                         employeeID: doc.employeeID,

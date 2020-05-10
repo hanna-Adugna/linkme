@@ -6,7 +6,7 @@ const Answer = require('../models/answer.model');
 exports.getAllAnswers = (req, res, next) => {
     Answer.find()
         .exec()
-        .then(doc => {
+        .then(docs => {
             const response = {
                 count: docs.length,
                 answer: docs.map(doc => {
