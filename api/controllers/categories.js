@@ -1,22 +1,23 @@
 const mongoose = require('mongoose');
 
-const Answer = require('../models/answer.model');
+const Category = require('../models/category.model');
 
-// GET all Answers from model
-exports.getAllAnswers = (req, res, next) => {
-    Answer.find()
+// GET all categories from model
+exports.getAllCategories = (req, res, next) => {
+    Category.find()
+        .select('name description')
         .exec()
-        .then(docs => {
+        .then(docs =>{
             const response = {
                 count: docs.length,
-                answer: docs.map(doc => {
+                categories: docs.map(doc => {
                     return{
-                        formID: doc.formID,
-                        answers: doc.answers,
+                      name: doc.name,
+                      description: doc.description,
                       _id: doc._id,
                       request: {
                           type: 'GET',
-                          url: process.env.URL +'/answers/' + doc._id
+                          url: process.env.URL +'/categories/' + doc._id
                       }
                     }
                 })
@@ -30,21 +31,21 @@ exports.getAllAnswers = (req, res, next) => {
                 error: err
             })
         });
-};
-
-// GET Answer data with specified ID
+}
+// GET categories data with specified ID
 exports.getByID = (req, res, next) => {
-    const id = req.params.answerID;
-    Answer.findById(id)
+    const id = req.params.categoryID;
+    Category.findById(id)
+        .select('name description')
         .exec()
         .then(doc => {
             console.log("response to GET request", doc);
             if(doc) {
                 res.status(200).json({
-                    bid: doc,
+                    category: doc,
                     request: {
                     type: 'GET',
-                    url: process.env.URL +'/answers/' 
+                    url: process.env.URL +'/categories/' 
                     }
     
                 });
@@ -61,31 +62,30 @@ exports.getByID = (req, res, next) => {
                 error: err
             })
         });
-};
-
-// POST (create) an Answer
-exports.createAnswer = (req, res, next) => {
-    const answer = new Answer({
+}
+// POST (create) a category
+exports.createCategory = (req, res, next) => {
+    const category = new Category({
         _id: new mongoose.Types.ObjectId,
-        formID: req.body.formID,
-        answers: req.body.answers
+        name: req.body.name,
+        description: req.body.description
     });
-    answer.save()
+    category.save()
         .then(result => {
             console.log(result);
             res.status(201).json({
-                message: "answer created successfully",
-                createdAnswer: {
-                    formID: result.formID,
-                    answers: result.answers,
+                message: "category created successfully",
+                createdCategory: {
+                    name : result.name,
+                    description: result.description,
                     _id: result._id,
                     request: {
                         type: 'Post',
-                        url: process.env.URL +'/answers/' + result._id
+                        url: process.env.URL +'/categories/' + result._id
                     }
     
                 }
-        });
+        })
         })
         .catch(err => {
             console.log(err);
@@ -93,53 +93,51 @@ exports.createAnswer = (req, res, next) => {
                 error: err
             });
         });
-};
-
+}
 // UPDATE
-exports.updateAnswer = (req, res, next) => {
-    const id = req.params.answerID;
+exports.updateCategory = (req, res, next) => {
+    const id = req.params.categoriesID;
     const updateOps = {};
 
     for(const ops of req.body) {
         updateOps[ops.propName] = ops.value;
     }
-    Answer.update(
+    Categories.update(
         { _id: id }, { $set: updateOps }
     ).exec()
         .then(result => {
             console.log(result);
             res.status(200).json({
-                message: 'answer updated',
+                message: 'category updated',
                 request:{
                     type: 'GET',
-                    url: process.env.URL + '/answers/' + id
+                    url: process.env.URL +'/categories/' + id
                 }
             });
-        })
+          })
         .catch(err => {
             console.log(err);
             res.status(500).json(err);
         });
-};
-
+}
 // DELETE
-exports.deleteAnswer = (req, res, next) => {
-    const id = req.params.answerID;
+exports.deleteCategory = (req, res, next) => {
+    const id = req.params.categoriesID;
 
-    Answer.remove({
+    Categories.remove({
         _id: id
     }).exec()
-        .then(result =>  {
-            res.status(200).json({
-                message: 'answers deleted',
-                request: {
-                    type: 'POST',
-                    url: process.env.URL +'/answers/',
-                }
-            });
-        })
+    .then(result => {
+        res.status(200).json({
+            message: 'category deleted',
+            request: {
+                type: 'POST',
+                url: process.env.URL +'/categories/',
+            }
+        });
+    })
         .catch(err => {
             console.log(err);
             res.status(500).json(err);
         });
-};
+}
