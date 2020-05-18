@@ -1,4 +1,6 @@
 const User = require('../models/user.model');
+const Employee = require('../models/Employee.model');
+const Employer = require('../models/Employer.model');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -85,6 +87,7 @@ exports.signupUser = (req, res, next) => {
                     });
                 }
                 else {
+                    const role = req.params.role;
                     const user = new User({
                         _id: new mongoose.Types.ObjectId(),
                         username: req.body.username,
@@ -92,9 +95,34 @@ exports.signupUser = (req, res, next) => {
                         phoneNumber: req.body.phoneNumber,
                         email: req.body.email,
                         userType: req.body.userType,
+                        // userType: role,
                         numberOfReport: req.body.numberOfReport,
+                         
                     }); 
-                    
+                    if(role === ":Employee")
+                    {
+                        const employee = new Employee({
+                            _id: new mongoose.Types.ObjectId(),
+                            userID: user._id,
+                            skils: req.body.skils,
+                            experience: req.body.experience,
+                        });
+                        employee  
+                        .save()
+                    }
+                    else if (role === ":Employer")
+                    {
+                        const employer = new Employer({
+                            _id: new mongoose.Types.ObjectId(),
+                            userID: user._id,
+                            interest: req.body.interest
+                        }); 
+                        
+                        employer
+                        .save()
+                    }
+                    else{
+                    }
             user
             .save()
             .then(result => { 

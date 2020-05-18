@@ -7,9 +7,9 @@ const UserController = require('../controllers/users')
 
 router.get('/' , checkAuth, UserController.getAllUsers );
 
-router.post('/signup', UserController.signupUser);
+router.post('/signup:role', UserController.signupUser);
 
-router.post('/login', UserController.loginUser )
+router.post('/login', UserController.loginUser );
 
 router.get("/:userID", checkAuth, UserController.getByID);
 
