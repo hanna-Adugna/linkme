@@ -5,10 +5,11 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+
 // GET all users from model
 exports.getAllUsers = (req, res, next) => {
     User.find()
-    .select('username password phoneNumber email userType numberOfReport')
+    .select('username password phoneNumber email userType numberOfReport profileImage')
     .exec()
     .then(docs =>{
         const response = {
@@ -21,6 +22,7 @@ exports.getAllUsers = (req, res, next) => {
                   email: doc.email,
                   userType: doc.userType,
                   numberOfReport: doc.numberOfReport,
+                  profileImage: doc.profileImage,
                    _id: doc._id,
                   request: {
                       type: 'GET',
@@ -44,7 +46,7 @@ exports.getAllUsers = (req, res, next) => {
 exports.getByID = (req,res,next) => {
     const id = req.params.userID;
     User.findById(id)
-    .select('username password phoneNumber email userType numberOfReport')
+    .select('username password phoneNumber email userType numberOfReport profileImage')
     .exec()
     .then(doc => {
         console.log("From databse",doc);
@@ -69,8 +71,12 @@ exports.getByID = (req,res,next) => {
     res.status(500).json({error:err});  
  });
 }
+var options = {
+    setDefaultsOnInsert: true
+  };
 // POST (create) a user
 exports.signupUser = (req, res, next) => {
+    // console.log(req.file.path);
     User.find({email: req.body.email, username: req.body.username })
     .exec()
     .then(user => {
@@ -79,7 +85,7 @@ exports.signupUser = (req, res, next) => {
                 message: 'Data already exists'
             });
         }
-        else{
+   else{
             bcrypt.hash(req.body.password, 10 ,(err,hash) =>{
                 if(err){
                     return res.status(500).json({
@@ -89,14 +95,15 @@ exports.signupUser = (req, res, next) => {
                 else {
                     const role = req.params.role;
                     const user = new User({
+                        setDefaultsOnInsert: true,
                         _id: new mongoose.Types.ObjectId(),
                         username: req.body.username,
                         password: hash,
                         phoneNumber: req.body.phoneNumber,
                         email: req.body.email,
                         userType: req.body.userType,
-                        // userType: role,
                         numberOfReport: req.body.numberOfReport,
+                        profileImage: req.body.profileImage
                          
                     }); 
                     if(role === ":Employee")
@@ -104,7 +111,7 @@ exports.signupUser = (req, res, next) => {
                         const employee = new Employee({
                             _id: new mongoose.Types.ObjectId(),
                             userID: user._id,
-                            skils: req.body.skils,
+                            skill: req.body.skill,
                             experience: req.body.experience,
                         });
                         employee  
@@ -136,12 +143,13 @@ exports.signupUser = (req, res, next) => {
                         email: req.body.email,
                         userType: req.body.userType,
                         numberOfReport: req.body.numberOfReport,
+                        profileImage:req.body.profileImage,
                         _id: result._id,
                         request: {
                             type: 'Post',
                             url: process.env.URL +'/users/' + result._id
                         }
-        
+    
                     }
             });
         })
@@ -155,8 +163,6 @@ exports.signupUser = (req, res, next) => {
             });
         }
     })
-    
- 
 }
 // Login
 exports.loginUser = (req,res, next) => {
@@ -211,11 +217,13 @@ exports.loginUser = (req,res, next) => {
 }
 // UPDATE
 exports.updateUser = (req, res, next) => {
+    console.log(req.file.path);
     const id = req.params.userID;
     const updateOps = {};
-    for (const ops of req.body) {
+    for (const ops of req.file.path) {
         updateOps[ops.propName] = ops.value;
     }
+    // _id in db must match the id passed in the url
     User.update({_id: id},{ $set: updateOps })
     .exec()
     .then(result => {
