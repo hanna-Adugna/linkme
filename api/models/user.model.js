@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const userSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    username: { type: String, unique: true },
+    username: { type: String,  unique: true },
     password: { type: String, require: true},
     phoneNumber: { type: String, },
     email: { 
@@ -13,7 +13,6 @@ const userSchema = mongoose.Schema({
         },
     userType: { type: String, enum:['Admin','Employer','Employee'] },
     numberOfReport: { type: Number, default: 0 },
-    profileImage: { type: String }
 
     
 });

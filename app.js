@@ -13,7 +13,6 @@ const answerRoutes = require('./api/routes/answers');
 const jobRoutes = require('./api/routes/jobs');
 const ratingRoutes = require('./api/routes/ratings');
 
-
 //db connection 
 mongoose.connect('mongodb+srv://linkme:' +
     process.env.MONGO_ATLAS_PW +
@@ -30,7 +29,6 @@ mongoose.Promise = global.Promise;
 
 // dev tools
 app.use(morgan('dev'));
-app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
