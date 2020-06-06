@@ -1,0 +1,15 @@
+package-lock.json 
+ it will install the exact latest version of that package
+in your project and save the dependency in package.json with a carat (^) sign.
+Like, if the current version of a package is 5.2.3 then the installed version will be 5.2.3 and
+the saved dependency will be ^5.2.3. Carat (^) means it will support any higher version with major 
+version 5 like 5.3.1 and so on. Here, package-lock.json is created for locking the dependency with
+ the installed version.
+
+ CORS error
+ Cross-Origin Resource Sharing
+ Since our frontend server and backend server are from different origin we need to allow the security issue 
+ Its a mechanism which uses additional hhtp headers to tell a browser w a specific web app can share resource 
+ with another web app. 
+
+ Bosy-parser 
