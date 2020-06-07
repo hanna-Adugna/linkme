@@ -65,11 +65,15 @@ exports.getByID =  (req, res, next) => {
 }
 // POST (create) a form
 exports.createForm = (req, res, next) => {
+
+    const questionArray = req.body.questions;
+
     const form = new Form({
         _id: new mongoose.Types.ObjectId,
         jobID: req.body.jobID,
-        questions: req.body.questions
+        questions: questionArray
     });
+
     form.save()
         .then(result => {
             console.log(result);
