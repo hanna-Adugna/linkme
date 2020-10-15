@@ -2,9 +2,11 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 
+// diskStorage = detailed way for a file to be stored 
 const storage = multer.diskStorage({
+    //cb ca''back
   destination: function(req, file, cb)
-  {
+  { // for error null
       cb(null, './uploads/');
   },
   filename: function(req, file, cb)
@@ -14,13 +16,14 @@ const storage = multer.diskStorage({
 
 });
 const fileFilter = (req, file, cb)=>{
-    //reject a file
+    
     if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png')
     {
         cb(null,true);
     }
     else
     {
+        //reject a file by
     cb(null,false);
     cb(new Error('File not supported'));  
     }
@@ -37,17 +40,17 @@ const upload = multer({
 const checkAuth = require('../middleware/check-auth');
 
 const UserController = require('../controllers/users')
-
-router.get('/' , checkAuth, UserController.getAllUsers );
-
-router.post('/signup:role', upload.single('profileImage'), UserController.signupUser);
+//add  checkAuth,
+router.get('/' , UserController.getAllUsers );
+// single parse 1 file
+router.post('/signup:role', UserController.signupUser);
 
 router.post('/login', UserController.loginUser );
 
 router.get("/:userID", UserController.getByID);
 
 router.patch('/:userID',upload.single('profileImage'), UserController.updateUser );
-
-router.delete('/:userID',checkAuth, UserController.deleteUser);
+//add  checkAuth,
+router.delete('/:userID', UserController.deleteUser);
 
 module.exports = router;    

@@ -5,15 +5,23 @@ const Form = require('../models/form.model');
 // GET all forms from model
 exports.getAllForms = (req, res, next) => {
     Form.find()
-    .select('jobID questions')
+    .select()
         .exec()
         .then(docs =>{
             const response = {
                 count: docs.length,
                 forms: docs.map(doc => {
                     return{
-                      jobID: doc.jobID,
-                      questions: doc.questions,
+                    categoryID: doc.categoryID,
+                    type: doc.type,
+                    duration: doc.duration,
+                    location: doc.location,
+                    price: doc.price,
+                    filledQuestion: doc.filledQuestion,
+                    employeeID: doc.employeeID,
+                    employerID: doc.employerID,
+                    confirmation: doc.confirmation,
+                    jobMode: doc.jobMode,
                       _id: doc._id,
                       request: {
                           type: 'GET',
@@ -36,7 +44,7 @@ exports.getAllForms = (req, res, next) => {
 exports.getByID =  (req, res, next) => {
     const id = req.params.formID;
     Form.findById(id)
-        .select('jobID questions')
+        .select()
         .exec()
         .then(doc => {
             console.log("response to GET request", doc);
@@ -65,13 +73,21 @@ exports.getByID =  (req, res, next) => {
 }
 // POST (create) a form
 exports.createForm = (req, res, next) => {
-
+ // what is it?
     const questionArray = req.body.questions;
 
     const form = new Form({
         _id: new mongoose.Types.ObjectId,
-        jobID: req.body.jobID,
-        questions: questionArray
+        categoryID:  req.body.categoryID,
+        type:  req.body.type,
+        duration:  req.body.duration,
+        location:  req.body.location,
+        price:  req.body.price,
+        filledQuestion:  req.body.filledQuestion,
+        employeeID:  req.body.employeeID,
+        employerID:  req.body.employerID,
+        confirmation:  req.body.confirmation,
+        jobMode:  req.body.jobMode,
     });
 
     form.save()
@@ -80,8 +96,16 @@ exports.createForm = (req, res, next) => {
             res.status(201).json({
                 message: "form created successfully",
                 createdform: {
-                    jobID : result.jobID,
-                    questions:result.questions,
+                    categoryID:  result.categoryID,
+                    type:  result.type,
+                    duration:  result.duration,
+                    location:  result.location,
+                    price: result.price,
+                    filledQuestion:  result.filledQuestion,
+                    employeeID:  result.employeeID,
+                    employerID: result.employerID,
+                    confirmation:  result.confirmation,
+                    jobMode:  result.jobMode,
                     _id: result._id,
                     request: {
                         type: 'Post',

@@ -1,4 +1,4 @@
-package-lock.json 
+<< package-lock.json >>
  it will install the exact latest version of that package
 in your project and save the dependency in package.json with a carat (^) sign.
 Like, if the current version of a package is 5.2.3 then the installed version will be 5.2.3 and
@@ -6,10 +6,44 @@ the saved dependency will be ^5.2.3. Carat (^) means it will support any higher 
 version 5 like 5.3.1 and so on. Here, package-lock.json is created for locking the dependency with
  the installed version.
 
- CORS error
+ << CORS error >>
  Cross-Origin Resource Sharing
+ a security mechanism by the browser thats why by setting a header we pass the error
+
  Since our frontend server and backend server are from different origin we need to allow the security issue 
  Its a mechanism which uses additional hhtp headers to tell a browser w a specific web app can share resource 
  with another web app. 
 
- Bosy-parser 
+ so by sending a header from the server to the client that it can have access
+
+ << Body-parser >>
+ parse the body of an incoming requests 
+ body parser doesnt support files,but url incoded,json files
+
+<< DB >>
+app
+mongodb+srv://linkme:linkme321@linkmecluster.xj5bn.mongodb.net/<dbname>?retryWrites=true&w=majority
+compass
+mongodb+srv://linkme:linkme321@linkmecluster.xj5bn.mongodb.net/test
+
+
+<< what is next() >>
+
+In fact, the routing methods can have more than one callback function as arguments. 
+With multiple callback functions, it is important to provide next as an argument to the
+callback function and then call next() within the body of the function to hand off control to the next callback.
+
+<< what is callback() >>
+
+<< req.params >>
+Route parameters are named URL segments that are used
+to capture the values specified at their position in the URL.
+The captured values are populated in the req.params
+
+<< dev >> 
+morgan('dev')
+Concise output colored by response status for development use. The :status token will be colored green for success codes,
+red for server error codes, yellow for client error codes, cyan for redirection codes, and uncolored for information codes.
+
+<< multer >>
+like body parser but form-data body (for a file)

@@ -5,15 +5,15 @@ const checkAuth = require('../middleware/check-auth');
 const {checkRole} = require('../middleware/check-role');
 
 const FormController = require('../controllers/forms');
-
-router.get('/', checkAuth,FormController.getAllForms);
-
-router.get('/:formID', checkAuth,checkRole(['Employee','Employer']),FormController.getByID);
-
-router.post('/', checkAuth,checkRole(['Employer']),FormController.createForm );
-
-router.patch('/:formID', checkAuth,checkRole(['Employer']),FormController.updateForm );
-
-router.delete('/:formID',checkAuth,checkRole(['Employer']),FormController.deleteForm );
+// add checkAuth,
+router.get('/', FormController.getAllForms);
+// checkAuth,checkRole(['Employee','Employer']),
+router.get('/:formID', FormController.getByID);
+//add checkAuth,checkRole(['Employer']),
+router.post('/', FormController.createForm );
+//add  checkAuth,checkRole(['Employer']),
+router.patch('/:formID',FormController.updateForm );
+//add ,checkAuth,checkRole(['Employer'])
+router.delete('/:formID',FormController.deleteForm );
 
 module.exports = router;

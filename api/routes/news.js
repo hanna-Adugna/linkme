@@ -4,16 +4,16 @@ const router = express.Router();
 const checkAuth = require('../middleware/check-auth');
 const {checkRole} = require('../middleware/check-role');
 
-const JobController = require('../controllers/jobs')
+const NewsController = require('../controllers/news')
 //checkAuth,
-router.get('/',  JobController.getAllJobs);
+router.get('/',  NewsController.getAllNews);
 //checkAuth,
-router.get("/:jobID",  JobController.getByID);
+router.get("/:newsID",  NewsController.getByID);
 //add checkAuth, checkRole(['Employer']),
-router.post('/', JobController.createJob );
+router.post('/', NewsController.addNews );
 // add checkAuth,checkRole(['Employer']),
-router.patch('/:jobID',  JobController.updateJob );
+router.patch('/:newsID',  NewsController.updateNews );
 // add checkAuth,checkRole(['Employer']),
-router.delete('/:jobID',  JobController.deleteJob );
+router.delete('/:newsID',  NewsController.deleteNews );
 
 module.exports = router;    
