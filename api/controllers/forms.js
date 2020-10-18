@@ -87,6 +87,7 @@ exports.createForm = (req, res, next) => {
         employeeID:  req.body.employeeID,
         employerID:  req.body.employerID,
         confirmation:  req.body.confirmation,
+        // if its public or private 
         jobMode:  req.body.jobMode,
     });
 
