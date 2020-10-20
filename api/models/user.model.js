@@ -2,9 +2,11 @@ const mongoose = require('mongoose');
 
 const userSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    username: { type: String,  unique: true },
-    password: { type: String, require: true},
-    phoneNumber: { type: String, },
+    username: { type: String, unique: true },
+    firstname: [String],
+    middlename: { type: String },
+    lastname: { type: String },
+    password: { type: String},
     email: { 
         type: String,
          require: true,
@@ -13,6 +15,8 @@ const userSchema = mongoose.Schema({
         },
     userType: { type: String, enum:['Admin','Employer','Employee'] },
     numberOfReport: { type: Number, default: 0 },
+    avatar: { type: String },
+    freeTrial: { type: Number, defaul: 5 }
 
     
 });

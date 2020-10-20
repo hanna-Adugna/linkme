@@ -1,24 +1,23 @@
 const mongoose = require('mongoose');
 
-const Category = require('../models/category.model');
+const Chat = require('../models/chat.model');
 
-// GET all categories from model
-exports.getAllCategories = (req, res, next) => {
-    Category.find()
-        .select('name description')
+// GET all chats from model
+exports.getAllChats = (req, res, next) => {
+    Chat.find()
+        .select('JobID messages')
         .exec()
         .then(docs =>{
             const response = {
                 count: docs.length,
-                categories: docs.map(doc => {
+                chats: docs.map(doc => {
                     return{
-                     categoryName: doc.categoryName,
-                     categoryTitle: doc.categoryTitle,
-                     questions: doc.questions,
+                      JobID: doc.JobID,
+                      messages: doc.messages,
                       _id: doc._id,
                       request: {
                           type: 'GET',
-                          url: process.env.URL +'/categories/' + doc._id
+                          url: process.env.URL +'/chats/' + doc._id
                       }
                     }
                 })
@@ -33,20 +32,20 @@ exports.getAllCategories = (req, res, next) => {
             })
         });
 }
-// GET categories data with specified ID
+// GET chats data with specified ID
 exports.getByID = (req, res, next) => {
-    const id = req.params.categoryID;
-    Category.findById(id)
-        .select('name description')
+    const id = req.params.chatID;
+    Chat.findById(id)
+        .select('JobID messages')
         .exec()
         .then(doc => {
             console.log("response to GET request", doc);
             if(doc) {
                 res.status(200).json({
-                    category: doc,
+                    chat: doc,
                     request: {
                     type: 'GET',
-                    url: process.env.URL +'/categories/' 
+                    url: process.env.URL +'/chats/' 
                     }
     
                 });
@@ -64,27 +63,25 @@ exports.getByID = (req, res, next) => {
             })
         });
 }
-// POST (create) a category
-exports.createCategory = (req, res, next) => {
-    const category = new Category({
+// POST (create) a chat
+exports.createChat= (req, res, next) => {
+    const chat = new Chat({
         _id: new mongoose.Types.ObjectId,
-        categoryName: req.body.categoryName,
-        categoryTitle: req.body.categoryTitle,
-        questions: req.body.questions
+        JobID: req.body.JobID,
+        messages: req.body.messages,
     });
-    category.save()
+    chat.save()
         .then(result => {
             console.log(result);
             res.status(201).json({
-                message: "category created successfully",
-                createdCategory: {
-                    categoryName : result.categoryName,
-                    categoryTitle: result.categoryTitle,
-                    questions: result.questions,
+                message: "chat created successfully",
+                createdChat: {
+                    JobID : result.JobID,
+                    messages: result.messages,
                     _id: result._id,
                     request: {
                         type: 'Post',
-                        url: process.env.URL +'/categories/' + result._id
+                        url: process.env.URL +'/chats/' + result._id
                     }
     
                 }
@@ -98,23 +95,23 @@ exports.createCategory = (req, res, next) => {
         });
 }
 // UPDATE
-exports.updateCategory = (req, res, next) => {
-    const id = req.params.categoriesID;
+exports.updateChat = (req, res, next) => {
+    const id = req.params.chatID;
     const updateOps = {};
 
     for(const ops of req.body) {
         updateOps[ops.propName] = ops.value;
     }
-    Categories.update(
+    Chat.update(
         { _id: id }, { $set: updateOps }
     ).exec()
         .then(result => {
             console.log(result);
             res.status(200).json({
-                message: 'category updated',
+                message: 'chat updated',
                 request:{
                     type: 'GET',
-                    url: process.env.URL +'/categories/' + id
+                    url: process.env.URL +'/chats/' + id
                 }
             });
           })
@@ -124,18 +121,18 @@ exports.updateCategory = (req, res, next) => {
         });
 }
 // DELETE
-exports.deleteCategory = (req, res, next) => {
-    const id = req.params.categoriesID;
+exports.deleteChat = (req, res, next) => {
+    const id = req.params.chatID;
 
     Categories.remove({
         _id: id
     }).exec()
     .then(result => {
         res.status(200).json({
-            message: 'category deleted',
+            message: 'chat deleted',
             request: {
                 type: 'POST',
-                url: process.env.URL +'/categories/',
+                url: process.env.URL +'/chats/',
             }
         });
     })

@@ -1,0 +1,28 @@
+for creating
+ a user 
+{
+    
+    
+    "username": "tryoct ",
+    "firstname": "try",
+    "middlename": "this",
+    "lastname": "week",
+     "email": "tryoct12@gmail.com",
+    "password": "try",
+    "skills": "PHP,C++",
+    "experience": "ecomerce"
+
+
+
+}
+answer
+{
+    "formID": "5f6a327f001d0726c8494034 ",
+    "answerID": "5f6a327f001d0726c8494034",
+    "jobStatus": "ok"
+}
+
+
+  // "devDependencies": {
+  //   "nodemon": "^2.0.2"
+  // }

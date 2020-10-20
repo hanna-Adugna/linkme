@@ -1,32 +1,24 @@
 const mongoose = require('mongoose');
 
-const Answer = require('../models/answer.model');
+const BankAccount = require('../models/bankAccount.model');
 
-// GET all Answers from model
-exports.getAllAnswers = (req, res, next) => {
-    //.find().where or limit for pagination
-    Answer.find()
-    // to get true promise
+// GET all BankAccounts from model
+exports.getAllBankAccounts = (req, res, next) => {
+    BankAccount.find()
         .exec()
         .then(docs => {
             const response = {
                 count: docs.length,
-                // map is to get indivisual doc
-                answers: docs.map(doc => {
+                BankAccounts: docs.map(doc => {
                     return{
-                        formID: doc.formID,
-                        employeeID: doc.employeeID,
-                        type: doc.type,
-                        duration: doc.duration,
-                        location: doc.location,
-                        price: doc.price,
-                        status: doc.status,
-                        confirmation: doc.confirmation,
-                        filledQuestion: doc.filledQuestion,
+                        userID: doc.userID,
+                        accountNumber: doc.accountNumber,
+                        balance: doc.balance,
+                        password: doc.password,
                       _id: doc._id,
                       request: {
                           type: 'GET',
-                          url: process.env.URL +'/answers/' + doc._id
+                          url: process.env.URL +'/BankAccounts/' + doc._id
                       }
                     }
                 })
@@ -42,19 +34,19 @@ exports.getAllAnswers = (req, res, next) => {
         });
 };
 
-// GET Answer data with specified ID
+// GET BankAccounts data with specified ID
 exports.getByID = (req, res, next) => {
-    const id = req.params.answerID;
-    Answer.findById(id)
+    const id = req.params.BankAccountID;
+    BankAccount.findById(id)
         .exec()
         .then(doc => {
             console.log("response to GET request", doc);
             if(doc) {
                 res.status(200).json({
-                    answer: doc,
+                    bid: doc,
                     request: {
                     type: 'GET',
-                    url: process.env.URL +'/answers/' 
+                    url: process.env.URL +'/BankAccounts/' 
                     }
     
                 });
@@ -73,39 +65,29 @@ exports.getByID = (req, res, next) => {
         });
 };
 
-// POST (create) an Answer
-exports.createAnswer = (req, res, next) => {
-    const answer = new Answer({
+// POST (create) an BankAccounts
+exports.createBankAccount = (req, res, next) => {
+    const bankAccounts = new BankAccount({
         _id: new mongoose.Types.ObjectId,
-        formID:  req.body.formID,
-        employeeID:  req.body.employeeID,
-        type:  req.body.type,
-        duration:  req.body.duration,
-        location:  req.body.location,
-        price:  req.body.price,
-        status:  req.body.status,
-        confirmation:  req.body.confirmation,
-        filledQuestion:  req.body.filledQuestion,
+        userID: req.body.userID,
+        accountNumber: req.body.accountNumber,
+        balance: req.body.balance,
+        password: req.body.password
     });
-    answer.save()
+    bankAccounts.save()
         .then(result => {
             console.log(result);
             res.status(201).json({
-                message: "answer created successfully",
-                createdAnswer: {
-                    formID: result.formID,
-                    employeeID: result.employeeID,
-                    type: result.type,
-                    duration: result.duration,
-                    location: result.location,
-                    price: result.price,
-                    status: result.status,
-                    confirmation: result.confirmation,
-                    filledQuestion: result.filledQuestion,
+                message: "Bank sccount created successfully",
+                createdBankAccounts: {
+                    userID: result.body.userID,
+                    accountNumber: result.body.accountNumber,
+                    balance: result.body.balance,
+                    password: result.body.password,
                     _id: result._id,
                     request: {
                         type: 'Post',
-                        url: process.env.URL +'/answers/' + result._id
+                        url: process.env.URL +'/BankAccounts/' + result._id
                     }
     
                 }
@@ -120,23 +102,23 @@ exports.createAnswer = (req, res, next) => {
 };
 
 // UPDATE
-exports.updateAnswer = (req, res, next) => {
-    const id = req.params.answerID;
+exports.updateBankAccount = (req, res, next) => {
+    const id = req.params.BankAccountID;
     const updateOps = {};
 
     for(const ops of req.body) {
         updateOps[ops.propName] = ops.value;
     }
-    Answer.update(
+    BankAccount.update(
         { _id: id }, { $set: updateOps }
     ).exec()
         .then(result => {
             console.log(result);
             res.status(200).json({
-                message: 'answer updated',
+                message: 'Bank account updated',
                 request:{
                     type: 'GET',
-                    url: process.env.URL + '/answers/' + id
+                    url: process.env.URL + '/BankAccounts/' + id
                 }
             });
         })
@@ -147,18 +129,18 @@ exports.updateAnswer = (req, res, next) => {
 };
 
 // DELETE
-exports.deleteAnswer = (req, res, next) => {
-    const id = req.params.answerID;
+exports.deleteBankAccount = (req, res, next) => {
+    const id = req.params.BankAccountID;
 
-    Answer.remove({
+    BankAccount.remove({
         _id: id
     }).exec()
         .then(result =>  {
             res.status(200).json({
-                message: 'answers deleted',
+                message: 'Bank account deleted',
                 request: {
                     type: 'POST',
-                    url: process.env.URL +'/answers/',
+                    url: process.env.URL +'/BankAccounts/',
                 }
             });
         })

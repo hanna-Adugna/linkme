@@ -1,24 +1,23 @@
 const mongoose = require('mongoose');
 
-const Job = require('../models/job.model');
+const News = require('../models/news.model');
 
-// GET all jobd from model
-exports.getAllJobs = (req, res, next) => {
-    Job.find()
-    .select('title duration')
+// GET all news from model
+exports.getAllNews = (req, res, next) => {
+    News.find()
+    .select()
     .exec()
     .then(docs =>{
         const response = {
             count: docs.length,
-            jobs: docs.map(doc => {
+            news: docs.map(doc => {
                 return{
-                formID: doc.formID,
-                answerID: doc.answerID,
-                jobStatus: doc.answerID,
+                categoryID: doc.categoryID,
+                news: doc.news,
                   _id: doc._id,
                   request: {
                       type: 'GET',
-                      url: process.env.URL +'/jobs/' + doc._id
+                      url: process.env.URL +'/news/' + doc._id
                   }
                 }
             })
@@ -34,20 +33,20 @@ exports.getAllJobs = (req, res, next) => {
     });
  
 }
-// GET jobd data with specified ID
+// GET news data with specified ID
 exports.getByID = (req,res,next) => {
-    const id = req.params.jobID;
-    Job.findById(id)
+    const id = req.params.newsID;
+    News.findById(id)
     .select()
     .exec()
     .then(doc => {
         console.log("From databse",doc);
         if(doc){
             res.status(200).json({
-                job: doc,
+                news: doc,
                 request: {
                 type: 'GET',
-                url: process.env.URL +'/jobs/' 
+                url: process.env.URL +'/news/' 
                 }
 
             });
@@ -62,29 +61,27 @@ exports.getByID = (req,res,next) => {
     res.status(500).json({error:err});  
  });
 }
-// POST (create) a job
-exports.createJob = (req, res, next) => {
-    const job = new Job({
+// POST (add) news
+exports.addNews = (req, res, next) => {
+    const news = new News({
         _id: new mongoose.Types.ObjectId(),
-        formID: req.body.formID,
-        answerID: req.body.answerID,
-        jobStatus: req.body.jobStatus
+        categoryID: req.body.categoryID,
+        news: req.body.news,
 
     });
-    job
+    news
     .save()
     .then(result => { 
         console.log(result);
         res.status(201).json({
-            message: "Job created successfully",
-            createdJob: {
-                formID : result.formID,
-                answerID : result.answerID,
-                jobStatus : result.jobStatus,
+            message: "News added successfully",
+            createdNews: {
+                categoryID : result.categoryID,
+                news : result.news,
                 _id: result._id,
                 request: {
                     type: 'Post',
-                    url: process.env.URL +'/jobs/' + result._id
+                    url: process.env.URL +'/news/' + result._id
                 }
 
             }
@@ -98,21 +95,21 @@ exports.createJob = (req, res, next) => {
     });
 }
 // UPDATE
-exports.updateJob = (req, res, next) => {
-    const id = req.params.jobID;
+exports.updateNews = (req, res, next) => {
+    const id = req.params.newsID;
     const updateOps = {};
     for (const ops of req.body) {
         updateOps[ops.propName] = ops.value;
     }
-    Job.update({_id: id},{ $set: updateOps })
+    News.update({_id: id},{ $set: updateOps })
     .exec()
     .then(result => {
       console.log(result);
       res.status(200).json({
-          message: 'Job updated',
+          message: 'news updated',
           request:{
               type: 'GET',
-              url: process.env.URL +'/jobs/' + id
+              url: process.env.URL +'/news/' + id
           }
       });
     })
@@ -124,16 +121,16 @@ exports.updateJob = (req, res, next) => {
     });
   }
 // DELETE
-exports.deleteJob = (req, res, next) => {
-    const id = req.params.jobID;
-    Job.remove({_id: id})
+exports.deleteNews = (req, res, next) => {
+    const id = req.params.newsID;
+    News.remove({_id: id})
     .exec()
     .then(result => {
         res.status(200).json({
-            message: 'Job deleted',
+            message: 'News deleted',
             request: {
                 type: 'POST',
-                url: process.env.URL +'/jobs/',
+                url: process.env.URL +'/news/',
                  
             }
         });

@@ -1,25 +1,26 @@
 const mongoose = require('mongoose');
 
-const Rating = require('../models/rating.model');
+const Feedback = require('../models/feedback.model');
 
 // GET all ratings from model
-exports.getAllRatings = (req, res, next) => {
-    Rating.find()
-    .select('bidID userID points comment')
+exports.getAllFeedbacks = (req, res, next) => {
+    Feedback.find()
+    .select('jobID from to points comment')
     .exec()
     .then(docs =>{
         const response = {
             count: docs.length,
-            rating: docs.map(doc => {
+            feedback: docs.map(doc => {
                 return{
-                    bidID: doc.bidID,
-                    userID: doc.userID,
-                    points: doc.points,
+                    jobID: doc.jobID,
+                    from: doc.from,
+                    to: doc.to,
+                    points :doc.points,
                     comment: doc.comment,
                     _id: doc._id,
                     request: {
                      type: 'GET',
-                    url: process.env.URL +'/ratings/' + doc._id
+                    url: process.env.URL +'/feedbacks/' + doc._id
                   }
                 }
             })
@@ -37,9 +38,9 @@ exports.getAllRatings = (req, res, next) => {
 }
 // GET ratings data with specified ID
 exports.getByID = (req,res,next) => {
-    const id = req.params.ratingID;
-    Rating.findById(id)
-    .select('bidID userID points comment')
+    const id = req.params.feedbackID;
+    Feedback.findById(id)
+    .select('jobID from to points comment')
     .exec()
     .then(doc => {
         console.log("From databse",doc);
@@ -48,7 +49,7 @@ exports.getByID = (req,res,next) => {
                 rating: doc,
                 request: {
                 type: 'GET',
-                url: process.env.URL +'/ratings/' 
+                url: process.env.URL +'/feedbacks/' 
                 }
 
             });
@@ -65,29 +66,31 @@ exports.getByID = (req,res,next) => {
  });
 }
 // POST rate a user
-exports.rateUser = (req, res, next) => {
-    const rating = new Rating({
+exports.giveFeedbacks = (req, res, next) => {
+    const feedback = new Feedback({
         _id: new mongoose.Types.ObjectId(),
-        bidID: req.body.bidID,
-        userID: req.body.userID,
+        jobID: req.body.jobID,
+        from: req.body.from,
+        to: req.body.to,
         points: req.body.points,
         comment: req.body.comment
     });
-    rating
+    feedback
     .save()
     .then(result => { 
         console.log(result);
         res.status(201).json({
             message: "rated successfully",
             rated: {
-                bidID : result.bidID,
-                userID:result.userID,
-                points : result.points,
-                comment:result.comment,
+                jobID: result.jobID,
+                from: result.from,
+                to: result.to,
+                points: result.points,
+                comment: result.comment,
                 _id: result._id,
                 request: {
                     type: 'Post',
-                    url: process.env.URL +'/ratings/' + result._id
+                    url: process.env.URL +'/feedbacks/' + result._id
                 }
 
             }
@@ -101,21 +104,21 @@ exports.rateUser = (req, res, next) => {
     });
 }
 // UPDATE
-exports.updateRate = (req, res, next) => {
-    const id = req.params.ratingID;
+exports.updateFeedback = (req, res, next) => {
+    const id = req.params.feedbackID;
     const updateOps = {};
     for (const ops of req.body) {
         updateOps[ops.propName] = ops.value;
     }
-   Rating.update({_id: id},{ $set: updateOps })
+   Feedback.update({_id: id},{ $set: updateOps })
     .exec()
     .then(result => {
       console.log(result);
       res.status(200).json({
-          message: 'rating updated',
+          message: 'feedback updated',
           request:{
               type: 'GET',
-              url: process.env.URL +'/ratings/' + id
+              url: process.env.URL +'/feedbacks/' + id
           }
       });
     })
@@ -127,16 +130,16 @@ exports.updateRate = (req, res, next) => {
     });
   }
 // DELETE
-exports.deleteRate = (req, res, next) => {
-    const id = req.params.ratingID;
-    Rating.remove({_id: id})
+exports.deleteFeedback = (req, res, next) => {
+    const id = req.params.feedbackID;
+    Feedback.remove({_id: id})
     .exec()
     .then(result => {
       res.status(200).json({
-          message: 'rating deleted',
+          message: 'feedback deleted',
           request: {
               type: 'POST',
-              url: process.env.URL +'/ratings/',             
+              url: process.env.URL +'/feedbacks/',             
   
           }
       });

@@ -1,31 +1,30 @@
 const mongoose = require('mongoose');
 
-const Bid = require('../models/bid.model');
+const Commission = require('../models/commission.model');
 
-// GET all bids from model
-exports.getAllBids =  (req, res, next) => {
-    Bid.find()
-        .select('jobID employeeID status description')
+// GET all Commission from model
+exports.getAllCommissions = (req, res, next) => {
+    Commission.find()
+        .select()
         .exec()
-        .then(doc => {
+        .then(docs =>{
             const response = {
-                count: doc.length,
-                bids: doc.map(doc => {
+                count: docs.length,
+                commissions: docs.map(doc => {
                     return{
-                        jobID: doc.jobID,
-                        employeeID: doc.employeeID,
-                        status: doc.status,
-                        description: doc.description,
+                      JobID: doc.JobID,
+                      amount: doc.amount,
+                      adminID: doc.adminID,
                       _id: doc._id,
                       request: {
                           type: 'GET',
-                          url: process.env.URL +'/bids/' + doc._id
+                          url: process.env.URL +'/Commissions/' + doc._id
                       }
                     }
                 })
     
             };
-            res.status(200).json(doc);
+            res.status(200).json(response);
         })
         .catch(err => {
             console.log(err);
@@ -34,20 +33,20 @@ exports.getAllBids =  (req, res, next) => {
             })
         });
 }
-// GET bids data with specified ID
+// GET Commission data with specified ID
 exports.getByID = (req, res, next) => {
-    const id = req.params.bidID;
-    Bid.findById(id)
-        .select('jobID employeeID status description')
+    const id = req.params.commissionID;
+    Commission.findById(id)
+        .select()
         .exec()
         .then(doc => {
             console.log("response to GET request", doc);
             if(doc) {
                 res.status(200).json({
-                    bid: doc,
+                    Commission: doc,
                     request: {
                     type: 'GET',
-                    url: process.env.URL +'/bids/' 
+                    url: process.env.URL +'/Commissions/' 
                     }
     
                 });
@@ -65,30 +64,27 @@ exports.getByID = (req, res, next) => {
             })
         });
 }
-// POST (create) a bid
-exports.createBid =  (req, res, next) => {
-    
-    const bid = new Bid({
+// POST (create) a Commission
+exports.createCommission= (req, res, next) => {
+    const commission = new Commissions({
         _id: new mongoose.Types.ObjectId,
-        jobID: req.body.jobID,
-        employeeID: req.body.employeeID,
-        status: req.body.status,
-        description: req.body.description
+        JobID: req.body.JobID,
+        adminID: req.body.adminID,
+        amount: req.body.amount,
     });
-    bid.save()
+    commission.save()
         .then(result => {
             console.log(result);
             res.status(201).json({
-                message: "Bid created successfully",
-                createdBid: {
-                    jobID : result.jobID,
-                    employeeID:result.employeeID,
-                    status : result.status,
-                    description:result.description,
+                message: "successfully",
+                createdcommission: {
+                    JobID : result.JobID,
+                    adminID: result.adminID,
+                    amount: result.amount,
                     _id: result._id,
                     request: {
                         type: 'Post',
-                        url: process.env.URL +'/bids/' + result._id
+                        url: process.env.URL +'/commissions/' + result._id
                     }
     
                 }
@@ -102,47 +98,47 @@ exports.createBid =  (req, res, next) => {
         });
 }
 // UPDATE
-exports.updateBid = (req, res, next) => {
-    const id = req.params.bidID;
+exports.updateCommission = (req, res, next) => {
+    const id = req.params.commissionID;
     const updateOps = {};
 
     for(const ops of req.body) {
         updateOps[ops.propName] = ops.value;
     }
-    Bid.update(
+    Commission.update(
         { _id: id }, { $set: updateOps }
     ).exec()
         .then(result => {
             console.log(result);
             res.status(200).json({
-                message: 'Bid updated',
+                message: 'Commission updated',
                 request:{
                     type: 'GET',
-                    url: process.env.URL +'/bids/' + id
+                    url: process.env.URL +'/Commissions/' + id
                 }
             });
-        })
+          })
         .catch(err => {
             console.log(err);
             res.status(500).json(err);
         });
 }
 // DELETE
-exports.deleteBid = (req, res, next) => {
-    const id = req.params.bidID;
+exports.deleteCommission = (req, res, next) => {
+    const id = req.params.commissionID;
 
-    Bid.remove({
+    Commission.remove({
         _id: id
     }).exec()
-        .then(result => {
-            res.status(200).json({
-                message: 'Bid deleted',
-                request: {
-                    type: 'POST',
-                    url: process.env.URL +'/bids/',
-                }
-            });
-        })
+    .then(result => {
+        res.status(200).json({
+            message: 'Commission deleted',
+            request: {
+                type: 'POST',
+                url: process.env.URL +'/Commissions/',
+            }
+        });
+    })
         .catch(err => {
             console.log(err);
             res.status(500).json(err);

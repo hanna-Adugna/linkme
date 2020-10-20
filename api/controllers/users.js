@@ -16,11 +16,16 @@ exports.getAllUsers = (req, res, next) => {
             user: docs.map(doc => {
                 return{
                   username: doc.username,
+                  firstname: doc.firstname,
+                  middlename: doc.middlename,
+                  lastname: doc.lastname,
                   password: doc.password,
                   phoneNumber: doc.phoneNumber,
                   email: doc.email,
                   userType: doc.userType,
                   numberOfReport: doc.numberOfReport,
+                  avatar: doc.avatar,
+                  freeTrial: doc.freeTrial,
                    _id: doc._id,
                   request: {
                       type: 'GET',
@@ -91,22 +96,29 @@ exports.signupUser = (req, res, next) => {
                     const user = new User({
                         _id: new mongoose.Types.ObjectId(),
                         username: req.body.username,
+                        firstname: req.body.firstname,
+                        middlename: req.body.middlename,
+                        lastname: req.body.lastname,
                         password: hash,
                         phoneNumber: req.body.phoneNumber,
                         email: req.body.email,
                         userType: req.body.userType,
-                        // userType: role,
-                        numberOfReport: req.body.numberOfReport,
+                        numberOfReport: req.body.numberOfReport, 
+                        avatar: req.body.avatar,
+                        freeTrial: req.body.freeTrial,
                          
                     }); 
                     if(role === ":Employee")
                     {
+                        const hold = req.body.skills
                         const employee = new Employee({
                             _id: new mongoose.Types.ObjectId(),
                             userID: user._id,
-                            skils: req.body.skils,
-                            experience: req.body.experience,
+                            skills: hold,
+                            experiences: req.body.experiences,
+                            
                         });
+                       
                         employee  
                         .save()
                     }
@@ -131,11 +143,17 @@ exports.signupUser = (req, res, next) => {
                     message: "User created successfully",
                     createdUser: {
                         username: req.body.username,
+                        firstname: req.body.firstname,
+                        middlename: req.body.middlename,
+                        lastname: req.body.lastname,
                         password: req.body.password,
                         phoneNumber: req.body.phoneNumber,
                         email: req.body.email,
                         userType: req.body.userType,
                         numberOfReport: req.body.numberOfReport,
+                        avatar: req.body.avatar,
+                        freeTrial: req.body.freeTrial,
+
                         _id: result._id,
                         request: {
                             type: 'Post',
