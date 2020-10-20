@@ -17,7 +17,7 @@ const newsRoutes = require('./api/routes/news');
 const userRoutes = require('./api/routes/users');
 
 //db connection mongodb+srv://linkme:
-mongoose.connect('mongodb+srv://linkme:' +
+mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://linkme:' +
     process.env.MONGO_ATLAS_PW +
     '@linkmecluster.xj5bn.mongodb.net/LinkMeDB?retryWrites=true&w=majority',
     {
