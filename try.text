@@ -22,3 +22,7 @@ answer
     "jobStatus": "ok"
 }
 
+
+  // "devDependencies": {
+  //   "nodemon": "^2.0.2"
+  // }
