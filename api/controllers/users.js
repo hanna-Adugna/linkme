@@ -5,11 +5,10 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-
 // GET all users from model
 exports.getAllUsers = (req, res, next) => {
     User.find()
-    .select('username password phoneNumber email userType numberOfReport profileImage')
+    .select('username password phoneNumber email userType numberOfReport')
     .exec()
     .then(docs =>{
         const response = {
@@ -50,7 +49,7 @@ exports.getAllUsers = (req, res, next) => {
 exports.getByID = (req,res,next) => {
     const id = req.params.userID;
     User.findById(id)
-    .select('username password phoneNumber email userType numberOfReport profileImage')
+    .select('username password phoneNumber email userType numberOfReport')
     .exec()
     .then(doc => {
         console.log("From databse",doc);
@@ -75,12 +74,8 @@ exports.getByID = (req,res,next) => {
     res.status(500).json({error:err});  
  });
 }
-var options = {
-    setDefaultsOnInsert: true
-  };
 // POST (create) a user
 exports.signupUser = (req, res, next) => {
-    // console.log(req.file.path);
     User.find({email: req.body.email, username: req.body.username })
     .exec()
     .then(user => {
@@ -89,7 +84,7 @@ exports.signupUser = (req, res, next) => {
                 message: 'Data already exists'
             });
         }
-   else{
+        else{
             bcrypt.hash(req.body.password, 10 ,(err,hash) =>{
                 if(err){
                     return res.status(500).json({
@@ -99,7 +94,6 @@ exports.signupUser = (req, res, next) => {
                 else {
                     const role = req.params.role;
                     const user = new User({
-                        setDefaultsOnInsert: true,
                         _id: new mongoose.Types.ObjectId(),
                         username: req.body.username,
                         firstname: req.body.firstname,
@@ -165,7 +159,7 @@ exports.signupUser = (req, res, next) => {
                             type: 'Post',
                             url: process.env.URL +'/users/' + result._id
                         }
-    
+        
                     }
             });
         })
@@ -179,6 +173,8 @@ exports.signupUser = (req, res, next) => {
             });
         }
     })
+    
+ 
 }
 // Login
 exports.loginUser = (req,res, next) => {
@@ -233,13 +229,11 @@ exports.loginUser = (req,res, next) => {
 }
 // UPDATE
 exports.updateUser = (req, res, next) => {
-    console.log(req.file.path);
     const id = req.params.userID;
     const updateOps = {};
-    for (const ops of req.file.path) {
+    for (const ops of req.body) {
         updateOps[ops.propName] = ops.value;
     }
-    // _id in db must match the id passed in the url
     User.update({_id: id},{ $set: updateOps })
     .exec()
     .then(result => {

@@ -47,7 +47,7 @@ router.post('/signup:role', UserController.signupUser);
 
 router.post('/login', UserController.loginUser );
 
-router.get("/:userID", UserController.getByID);
+router.get("/:userID", checkAuth, UserController.getByID);
 
 router.patch('/:userID',upload.single('profileImage'), UserController.updateUser );
 //add  checkAuth,
